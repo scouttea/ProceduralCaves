@@ -64,3 +64,47 @@ def cellular_automata(level, lower=3, regen=4, area=1, iteration=8):
         level = level & (nbors > lower) | (level == 0) & (nbors > regen)
 
     return level
+
+
+@njit
+def erode(level, iteration=20000, d=40, aspect=4, momentum=0.6, seed=125):
+    """
+    Erodes terrain using random walks
+        iterations ~ amount of erosion starting locations
+        d          ~ how big the each erosion will get
+        aspect     ~ ratio between width / height of erosion
+        momentum   ~ how likely the erosion will move in 1 direction
+    """
+
+    np.random.seed(seed)
+
+    h, w = level.shape
+
+    for _ in range(iteration):
+        # generate random starting location
+        x = np.random.randint(w)
+        y = np.random.randint(h)
+
+        mx, my = 0, 0
+
+        # if starting location isn't empty abort
+        # this is to avoid generating seperated pockets
+        if level[y, x]:
+            continue
+
+        for _ in range(d):
+            p = np.random.rand()
+            if np.random.rand() > 1/(1 + aspect):
+                dir = p < (0.5 + (mx)*momentum)
+                x += (dir*2 - 1)  # [0 - 1] -> [-1 1]
+                mx = (dir*2 - 1) + mx/2
+            else:
+                dir = p < (0.5 + (my)*momentum)
+                y += (dir*2 - 1)
+                my = (dir*2 - 1) + my/2
+
+            # only erode within bounds
+            if (y % h == y and x % w == x):
+                level[y, x] = 0
+
+    return level

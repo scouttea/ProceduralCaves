@@ -19,9 +19,6 @@ save_image(level, "1_starting_noise")
 level = cellular_automata(level, 3, 4, 1, iteration=4)
 save_image(level, "2_large_scale_profile")
 
-# mask = random_noise(seed, *size)
-# level = mask & level
-
 level = border(level, height=2)
 save_image(level, "3_border")
 
@@ -41,8 +38,7 @@ save_image(level, "6_upscale_noise")
 level = cellular_automata(level, 15, 20, 2, iteration=1)
 level = cellular_automata(level, 3, 5, 1, iteration=2)
 save_image(level, "7_small_scale_profile")
-np.save("small_detail_level_large_demo", level)  # save result for other demos
-
+np.save("small_scale_large_demo", level)  # save result for other demos
 
 # Detail steps should be skipped when adding details some other way
 level = scale(level, 2)

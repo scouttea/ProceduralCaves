@@ -1,5 +1,6 @@
-from PIL import Image
 from proceduralcaves.generation import random_noise, cellular_automata
+
+from PIL import Image
 import numpy as np
 
 # Parameters
